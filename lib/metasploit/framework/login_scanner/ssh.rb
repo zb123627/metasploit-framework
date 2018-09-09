@@ -55,7 +55,8 @@ module Metasploit
             :config          => false,
             :verbose         => verbosity,
             :proxy           => factory,
-            :non_interactive => true
+            :non_interactive => true,
+            :verify_host_key => :never
           }
           case credential.private_type
           when :password, nil
@@ -144,6 +145,33 @@ module Metasploit
           self.connection_timeout = 30 if self.connection_timeout.nil?
           self.port = DEFAULT_PORT if self.port.nil?
           self.verbosity = :fatal if self.verbosity.nil?
+        end
+
+        public
+
+        def get_platform(proof)
+          case proof
+          when /Linux/
+            'linux'
+          when /Darwin/
+            'osx'
+          when /SunOS/
+            'solaris'
+          when /BSD/
+            'bsd'
+          when /HP-UX/
+            'hpux'
+          when /AIX/
+            'aix'
+          when /Win32|Windows/
+            'windows'
+          when /Unknown command or computer name/
+            'cisco-ios'
+          when /unknown keyword/ # ScreenOS
+            'juniper'
+          when /JUNOS Base OS/ #JunOS
+            'juniper'
+          end
         end
 
       end
